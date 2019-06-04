@@ -87,6 +87,7 @@ open class DatePickerDialog: UIView {
                    defaultDate: Date = Date(),
                    minimumDate: Date? = nil, maximumDate: Date? = nil,
                    datePickerMode: UIDatePickerMode = .dateAndTime,
+                   minuteInterval: Int? = nil,
                    callback: @escaping DatePickerCallback) {
         self.titleLabel.text = title
         self.doneButton.setTitle(doneButtonTitle, for: .normal)
@@ -103,17 +104,22 @@ open class DatePickerDialog: UIView {
         if let locale = self.locale {
             self.datePicker.locale = locale
         }
+        
+        if let minInterval = minuteInterval{
+            self.datePicker.minuteInterval = minInterval
+        }
+        
         /* Add dialog to main window */
         guard let appDelegate = UIApplication.shared.delegate else { fatalError() }
         guard let window = appDelegate.window else { fatalError() }
         window?.addSubview(self)
         window?.bringSubview(toFront: self)
         window?.endEditing(true)
-
+        
         NotificationCenter.default.addObserver(self,
                                                selector: .deviceOrientationDidChange,
                                                name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
-
+        
         /* Anim */
         UIView.animate(
             withDuration: 0.2,
